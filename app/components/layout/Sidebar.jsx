@@ -103,7 +103,7 @@ const SidebarComp = (props) => {
                 <Avatar sx={{ height: '70px', width: '70px', fontSize: '35px' }}>{userName.slice(0, 1)}</Avatar>
               </Box>
               <Box textAlign="center">
-                <Typography variant="h4" color={"#e0e0e0"} fontWeight="bold" sx={{ m: '10px 0 0 0' }}>
+                <Typography variant="h4" color={"#666666"} fontWeight="bold" sx={{ m: '10px 0 0 0' }}>
                   {userName.length > 14 ? `${userName.slice(0, 9)}...` : userName}
                 </Typography>
                 <Typography variant="h5" color={"#4cceac"}>

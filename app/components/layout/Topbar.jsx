@@ -17,8 +17,8 @@ const Topbar = (props) => {
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     {/* Options */}
                     <Box display="flex" sx={{ gap: '10px' }}>
-                        <XIcon sx={{ color: '#616161', position: 'relative', top: '3px' }} />
-                        <Typography variant='h5' sx={{ color: '#616161' }}>REPORTS</Typography>
+                        <XIcon sx={{ color: '#666666', position: 'relative', top: '3px' }} />
+                        <Typography variant='h5' sx={{ color: '#666666' }}>REPORTS</Typography>
                     </Box>
 
                     {/* Interactions */}
