@@ -19,12 +19,10 @@ const ReportsPage = () => {
     const initialLoad = () => {
         try{
             let dataArr = [...data];
-            console.log(dataArr)
 
             let paginatedData = dataArr.slice(page * rowsPerPage - rowsPerPage, page * rowsPerPage);
             setCount(dataArr.length);
             setRows(paginatedData);
-            console.log(paginatedData, "==========")
 
         } catch(err) {
             console.log(err);

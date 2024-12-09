@@ -23,7 +23,7 @@ const ReportsTable = ({ columns, page, rowsPerPage, count, rows, setPage, setRow
     },
   }));
 
-  const handleRowsPerPageChange = () => {
+  const handleRowsPerPageChange = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(1);
   }
