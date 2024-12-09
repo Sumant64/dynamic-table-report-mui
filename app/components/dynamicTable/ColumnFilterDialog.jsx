@@ -62,6 +62,8 @@ const ColumnFilterDialog = (props) => {
                     sx={{
                         maxHeight: '250px',
                         overflowY: 'auto',
+                        marginTop: '1rem',
+                        marginBottom: '1rem',
                         /* width */
                         "::-webkit-scrollbar": {
                             width: "5px"
