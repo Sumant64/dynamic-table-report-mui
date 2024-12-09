@@ -1,3 +1,4 @@
+import { dateFormat } from '@/utils/date';
 import { Paper, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
 import React from 'react'
 
@@ -51,16 +52,20 @@ const ReportsTable = ({ columns, page, rowsPerPage, count, rows, setPage, setRow
           <TableBody>
             {
               rows?.length > 0 && rows.map((item, index) => {
+                let createDate = dateFormat(item.createdOn);
+                let scheduledDate = dateFormat(item.scheduled);
+
+
                 return (
                   <StyledTableRow key={index}>
                     {columns[columns.findIndex(item => item.field === 'ID' && item.display)] && <StyledTableCell>{item.id}</StyledTableCell>}
-                    {columns[columns.findIndex(item => item.field === 'Created On' && item.display)] && <StyledTableCell>{item.createdOn}</StyledTableCell>}
+                    {columns[columns.findIndex(item => item.field === 'Created On' && item.display)] && <StyledTableCell>{createDate}</StyledTableCell>}
                     {columns[columns.findIndex(item => item.field === 'Payer' && item.display)] && <StyledTableCell>{item.payer}</StyledTableCell>}
                     {columns[columns.findIndex(item => item.field === 'Status' && item.display)] && <StyledTableCell>{item.status}</StyledTableCell>}
                     {columns[columns.findIndex(item => item.field === 'Email' && item.display)] && <StyledTableCell>{item.email}</StyledTableCell>}
                     {columns[columns.findIndex(item => item.field === 'Payer Phone' && item.display)] && <StyledTableCell>{item.payerPhone}</StyledTableCell>}
                     {columns[columns.findIndex(item => item.field === 'Services' && item.display)] && <StyledTableCell>{item.services}</StyledTableCell>}
-                    {columns[columns.findIndex(item => item.field === 'Scheduled' && item.display)] && <StyledTableCell>{item.scheduled}</StyledTableCell>}
+                    {columns[columns.findIndex(item => item.field === 'Scheduled' && item.display)] && <StyledTableCell>{scheduledDate}</StyledTableCell>}
 
                   </StyledTableRow>
                 )
