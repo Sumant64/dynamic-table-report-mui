@@ -1,5 +1,5 @@
 'use client'
-import { Box, Dialog, FormControl, InputLabel, MenuItem, Paper, Select } from '@mui/material';
+import { Box, Dialog, FormControl, InputBase, InputLabel, MenuItem, Paper, Select } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import data from '@/data/data.json'
 import { columnData } from '@/utils/tableHeader';
@@ -7,6 +7,7 @@ import ReportsTable from './ReportsTable';
 import { CiFilter } from "react-icons/ci";
 import { LuDownload } from "react-icons/lu";
 import ColumnFilterDialog from './ColumnFilterDialog';
+import SearchIcon from '@mui/icons-material/Search';
 
 const ReportsPage = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -17,10 +18,10 @@ const ReportsPage = () => {
 
     const [openDialog, setOpenDialog] = useState('');
     const [sort, setSort] = useState('7Days');
+    const [searchValue, setSearchValue] = useState('');
 
     useEffect(() => {
         initialLoad();
-        console.log(sort)
     }, [page, rowsPerPage, sort]);
 
     const initialLoad = () => {
@@ -36,6 +37,18 @@ const ReportsPage = () => {
         }
     }
 
+    const handleNoSearch = () => {
+
+    }
+
+    const handleEnterPress = (e) => {
+
+    }
+
+    const handleSearch = () => {
+
+    }
+
 
     return (
         <>
@@ -48,33 +61,72 @@ const ReportsPage = () => {
             <Box paddingTop={"20px"}>
                 {/* Options Container */}
                 <Box sx={{
-                    display: 'inline-flex',
-                    marginBottom: '10px'
-                }} component={Paper} elevation={3}>
-                    <Box sx={{ cursor: 'pointer', padding: '4px 10px', borderRight: '1px solid black' }} onClick={() => setOpenDialog('filter')}>
-                        <CiFilter />
+                    display: 'flex',
+                    marginBottom: '10px',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap'
+                }}>
+                    <Box component={Paper} elevation={3} sx={{
+                        display: 'inline-flex',
+                    }}>
+                        <Box sx={{ cursor: 'pointer', padding: '4px 10px', borderRight: '1px solid black' }} onClick={() => setOpenDialog('filter')}>
+                            <CiFilter />
+                        </Box>
+                        <Box sx={{ cursor: 'pointer', padding: '4px 10px' }}>
+                            <LuDownload />
+                        </Box>
+                        <Box>
+                            <Select
+                                value={sort}
+                                onChange={(e) => setSort(e.target.value)}
+                                // label="Select Action"
+                                style={{
+                                    height: '30px'
+                                }}
+                            >
+                                <MenuItem value="7Days">Last 7 Days</MenuItem>
+                                <MenuItem value="15Days">Last 15 Days</MenuItem>
+                                <MenuItem value="30Days">Last Month</MenuItem>
+                                <MenuItem value="custom">Custom</MenuItem>
+                            </Select>
+                        </Box>
                     </Box>
-                    <Box sx={{ cursor: 'pointer', padding: '4px 10px' }}>
-                        <LuDownload />
-                    </Box>
-                    <Box>
-                        <Select
-                            value={sort}
-                            onChange={(e) => setSort(e.target.value)}
-                            // label="Select Action"
-                            style={{
-                                height: '30px'
+
+                    {/* Search Container */}
+                    <Box sx={{
+                        position: 'relative',
+                        borderRadius: '10px',
+                        backgroundColor: "#fffffff0",
+                        border: `1px solid #e0e0e0`,
+                        padding: '5px',
+                        marginRight: '15px',
+                        marginTop: { xs: '10px', md: '0px' },
+                        width: { xs: '100%', md: '200px' },
+                        height: '30px',
+                        display: { xs: 'flex', md: 'flex' },
+                    }}>
+                        <SearchIcon sx={{ marginRight: '10px', cursor: 'pointer' }} onClick={handleSearch} />
+                        <InputBase
+                            placeholder="Search"
+                            value={searchValue}
+                            sx={{
+                                height: '30px',
+                                position: 'relative',
+                                top: '-4px'
                             }}
-                        >
-                            <MenuItem value="7Days">Last 7 Days</MenuItem>
-                            <MenuItem value="15Days">Last 15 Days</MenuItem>
-                            <MenuItem value="30Days">Last Month</MenuItem>
-                            <MenuItem value="custom">Custom</MenuItem>
-                        </Select>
+                            inputProps={{ 'aria-label': 'search' }}
+                            type="search"
+                            onChange={(e) => {
+                                setSearchValue(e.target.value);
+                                if (e.target.value == '') {
+                                    handleNoSearch();
+                                }
+                            }}
+                            onKeyDown={(e) => handleEnterPress(e)}
+                        />
                     </Box>
-
-
                 </Box>
+                
                 {/* Custom Sort */}
                 {
                     sort === 'custom' &&
@@ -82,7 +134,7 @@ const ReportsPage = () => {
                         display: 'inline-flex',
                         marginBottom: '10px'
                     }} component={Paper} elevation={3}>
-                    
+
                     </Box>
                 }
 
