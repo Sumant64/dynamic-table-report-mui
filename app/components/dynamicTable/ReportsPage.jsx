@@ -1,5 +1,5 @@
 'use client'
-import { Box, Dialog, Paper } from '@mui/material';
+import { Box, Dialog, FormControl, InputLabel, MenuItem, Paper, Select } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import data from '@/data/data.json'
 import { columnData } from '@/utils/tableHeader';
@@ -16,10 +16,12 @@ const ReportsPage = () => {
     const [count, setCount] = useState(0);
 
     const [openDialog, setOpenDialog] = useState('');
+    const [sort, setSort] = useState('7Days');
 
     useEffect(() => {
         initialLoad();
-    }, [page, rowsPerPage])
+        console.log(sort)
+    }, [page, rowsPerPage, sort]);
 
     const initialLoad = () => {
         try {
@@ -38,7 +40,7 @@ const ReportsPage = () => {
     return (
         <>
             {/* Columns filter dialog */}
-            <Dialog open={openDialog==="filter"} onClose={() => setOpenDialog("")}>
+            <Dialog open={openDialog === "filter"} onClose={() => setOpenDialog("")}>
                 <ColumnFilterDialog columns={columns} setColumns={setColumns} setOpenDialog={setOpenDialog} />
             </Dialog>
 
@@ -55,7 +57,35 @@ const ReportsPage = () => {
                     <Box sx={{ cursor: 'pointer', padding: '4px 10px' }}>
                         <LuDownload />
                     </Box>
+                    <Box>
+                        <Select
+                            value={sort}
+                            onChange={(e) => setSort(e.target.value)}
+                            // label="Select Action"
+                            style={{
+                                height: '30px'
+                            }}
+                        >
+                            <MenuItem value="7Days">Last 7 Days</MenuItem>
+                            <MenuItem value="15Days">Last 15 Days</MenuItem>
+                            <MenuItem value="30Days">Last Month</MenuItem>
+                            <MenuItem value="custom">Custom</MenuItem>
+                        </Select>
+                    </Box>
+
+
                 </Box>
+                {/* Custom Sort */}
+                {
+                    sort === 'custom' &&
+                    <Box sx={{
+                        display: 'inline-flex',
+                        marginBottom: '10px'
+                    }} component={Paper} elevation={3}>
+                    
+                    </Box>
+                }
+
 
                 <ReportsTable setRowsPerPage={setRowsPerPage} page={page} setPage={setPage} columns={columns} count={count} rowsPerPage={rowsPerPage} rows={rows} />
             </Box>
