@@ -17,17 +17,18 @@ const ReportsPage = () => {
     const [count, setCount] = useState(0);
 
     const [openDialog, setOpenDialog] = useState('');
-    const [sort, setSort] = useState('7Days');
     const [searchValue, setSearchValue] = useState('');
+    const [createdDate, setCreatedDate] = useState({from: '', to: '', field: 'All'})
 
     useEffect(() => {
         initialLoad(searchValue);
-    }, [page, rowsPerPage, sort]);
+    }, [page, rowsPerPage, createdDate]);
 
     const initialLoad = (search) => {
         try {
             let dataArr = [...data];
 
+            // for the search
             if(search?.length > 0) {
                 let searchList = dataArr.filter((item) => {
                     if(item.payer.includes(search)){
@@ -37,12 +38,55 @@ const ReportsPage = () => {
                 dataArr = searchList;
             }
 
+            // for the sort by created date:
+            if(createdDate.field !== "All") {
+                let from = new Date(createdDate.from);
+                let to = new Date(createdDate.to);
+    
+                let dateFilterList = dataArr.filter((item) => {
+                    let created = new Date(item.createdOn);
+                    return created >= from && created <= to;
+                })
+                dataArr = dateFilterList;
+            } 
+            
             let paginatedData = dataArr.slice(page * rowsPerPage - rowsPerPage, page * rowsPerPage);
             setCount(dataArr.length);
             setRows(paginatedData);
 
         } catch (err) {
             console.log(err);
+        }
+    }
+
+    const sortByDate = (val) => {
+        let to = '';
+        let from = '';
+        switch(val) {
+            case 'All':
+                setCreatedDate({ from: '', to: '', field: 'All' });
+                break;
+            case '7Days':
+                to = new Date();
+                from = new Date().setDate(to.getDate() - 7);
+                from = new Date(from);
+                setCreatedDate({from, to, field: '7Days'});
+                break;
+            case '15Days':
+                to = new Date();
+                from = new Date().setDate(to.getDate() - 15);
+                from = new Date(from);
+                setCreatedDate({from, to, field: '15Days'});
+                break;
+            case '30Days':
+                to = new Date();
+                from = new Date().setDate(to.getDate() - 30);
+                from = new Date(from);
+                console.log(from)
+                setCreatedDate({from, to, field: '30Days'});
+                break;
+            default:
+                return dataArr;
         }
     }
 
@@ -91,16 +135,17 @@ const ReportsPage = () => {
                         </Box>
                         <Box>
                             <Select
-                                value={sort}
-                                onChange={(e) => setSort(e.target.value)}
+                                value={createdDate.field}
+                                onChange={(e) => sortByDate(e.target.value)}
                                 // label="Select Action"
                                 style={{
                                     height: '30px'
                                 }}
                             >
+                                <MenuItem value="All">All</MenuItem>
                                 <MenuItem value="7Days">Last 7 Days</MenuItem>
                                 <MenuItem value="15Days">Last 15 Days</MenuItem>
-                                <MenuItem value="30Days">Last Month</MenuItem>
+                                <MenuItem value="30Days">Last 30 Days</MenuItem>
                                 <MenuItem value="custom">Custom</MenuItem>
                             </Select>
                         </Box>
@@ -143,7 +188,7 @@ const ReportsPage = () => {
 
                 {/* Custom Sort */}
                 {
-                    sort === 'custom' &&
+                    createdDate.field === 'custom' &&
                     <Box sx={{
                         display: 'inline-flex',
                         marginBottom: '10px'
