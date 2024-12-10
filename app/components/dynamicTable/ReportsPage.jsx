@@ -21,12 +21,21 @@ const ReportsPage = () => {
     const [searchValue, setSearchValue] = useState('');
 
     useEffect(() => {
-        initialLoad();
+        initialLoad(searchValue);
     }, [page, rowsPerPage, sort]);
 
-    const initialLoad = () => {
+    const initialLoad = (search) => {
         try {
             let dataArr = [...data];
+
+            if(search?.length > 0) {
+                let searchList = dataArr.filter((item) => {
+                    if(item.payer.includes(search)){
+                        return item
+                    }
+                })
+                dataArr = searchList;
+            }
 
             let paginatedData = dataArr.slice(page * rowsPerPage - rowsPerPage, page * rowsPerPage);
             setCount(dataArr.length);
@@ -38,15 +47,20 @@ const ReportsPage = () => {
     }
 
     const handleNoSearch = () => {
-
+        setSearchValue("")
+        initialLoad("")
     }
 
     const handleEnterPress = (e) => {
-
+        if (searchValue !== "" && e.key === "Enter") {
+            setPage(1);
+            setRowsPerPage(10);
+            initialLoad(searchValue);
+        }
     }
 
     const handleSearch = () => {
-
+        initialLoad(searchValue);
     }
 
 
@@ -107,7 +121,7 @@ const ReportsPage = () => {
                     }}>
                         <SearchIcon sx={{ marginRight: '10px', cursor: 'pointer' }} onClick={handleSearch} />
                         <InputBase
-                            placeholder="Search"
+                            placeholder="Search Payer"
                             value={searchValue}
                             sx={{
                                 height: '30px',
@@ -126,7 +140,7 @@ const ReportsPage = () => {
                         />
                     </Box>
                 </Box>
-                
+
                 {/* Custom Sort */}
                 {
                     sort === 'custom' &&
