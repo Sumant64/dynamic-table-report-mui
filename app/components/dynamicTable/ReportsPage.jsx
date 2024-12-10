@@ -1,5 +1,5 @@
 'use client'
-import { Box, Dialog, FormControl, InputBase, InputLabel, MenuItem, Paper, Select } from '@mui/material';
+import { Box, Button, Dialog, FormControl, InputBase, InputLabel, MenuItem, Paper, Select } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import data from '@/data/data.json'
 import { columnData } from '@/utils/tableHeader';
@@ -18,7 +18,8 @@ const ReportsPage = () => {
 
     const [openDialog, setOpenDialog] = useState('');
     const [searchValue, setSearchValue] = useState('');
-    const [createdDate, setCreatedDate] = useState({from: '', to: '', field: 'All'})
+    const [createdDate, setCreatedDate] = useState({ from: '', to: '', field: 'All' });
+    const [isCustom, setIsCustom] = useState({ from: '', to: '', display: false });
 
     useEffect(() => {
         initialLoad(searchValue);
@@ -29,9 +30,9 @@ const ReportsPage = () => {
             let dataArr = [...data];
 
             // for the search
-            if(search?.length > 0) {
+            if (search?.length > 0) {
                 let searchList = dataArr.filter((item) => {
-                    if(item.payer.includes(search)){
+                    if (item.payer.includes(search)) {
                         return item
                     }
                 })
@@ -39,17 +40,20 @@ const ReportsPage = () => {
             }
 
             // for the sort by created date:
-            if(createdDate.field !== "All") {
+            if (createdDate.field !== "All" && createdDate.from && createdDate.to) {
                 let from = new Date(createdDate.from);
                 let to = new Date(createdDate.to);
-    
+                console.log(from);
+                console.log(to);
+
                 let dateFilterList = dataArr.filter((item) => {
                     let created = new Date(item.createdOn);
+
                     return created >= from && created <= to;
                 })
                 dataArr = dateFilterList;
-            } 
-            
+            }
+
             let paginatedData = dataArr.slice(page * rowsPerPage - rowsPerPage, page * rowsPerPage);
             setCount(dataArr.length);
             setRows(paginatedData);
@@ -60,9 +64,10 @@ const ReportsPage = () => {
     }
 
     const sortByDate = (val) => {
+        setIsCustom({ from: '', to: '', display: false });
         let to = '';
         let from = '';
-        switch(val) {
+        switch (val) {
             case 'All':
                 setCreatedDate({ from: '', to: '', field: 'All' });
                 break;
@@ -70,20 +75,24 @@ const ReportsPage = () => {
                 to = new Date();
                 from = new Date().setDate(to.getDate() - 7);
                 from = new Date(from);
-                setCreatedDate({from, to, field: '7Days'});
+                setCreatedDate({ from, to, field: '7Days' });
                 break;
             case '15Days':
                 to = new Date();
                 from = new Date().setDate(to.getDate() - 15);
                 from = new Date(from);
-                setCreatedDate({from, to, field: '15Days'});
+                setCreatedDate({ from, to, field: '15Days' });
                 break;
             case '30Days':
                 to = new Date();
                 from = new Date().setDate(to.getDate() - 30);
                 from = new Date(from);
                 console.log(from)
-                setCreatedDate({from, to, field: '30Days'});
+                setCreatedDate({ from, to, field: '30Days' });
+                break;
+            case 'custom':
+                setCreatedDate({ field: '', to: '', field: 'custom' });
+                setIsCustom({display: true, from: '', to: ''})
                 break;
             default:
                 return dataArr;
@@ -105,6 +114,10 @@ const ReportsPage = () => {
 
     const handleSearch = () => {
         initialLoad(searchValue);
+    }
+
+    const handleCustomClick = () => {
+        setCreatedDate({field: 'custom', from: isCustom.from, to: isCustom.to});
     }
 
 
@@ -188,12 +201,39 @@ const ReportsPage = () => {
 
                 {/* Custom Sort */}
                 {
-                    createdDate.field === 'custom' &&
+                    isCustom.display &&
                     <Box sx={{
                         display: 'inline-flex',
-                        marginBottom: '10px'
+                        marginBottom: '10px',
+                        width: { xs: '100%', md: '20vw' }
                     }} component={Paper} elevation={3}>
-
+                        <input
+                            style={{
+                                flex: '1'
+                            }}
+                            type='date'
+                            value={isCustom.from}
+                            onChange={(event) => event.target.value?.length > 0 && setIsCustom({...isCustom, from: event.target.value})}
+                        />
+                        <input
+                            style={{
+                                flex: '1'
+                            }}
+                            type='date'
+                            onChange={(event) => event.target.value?.length > 0 && setIsCustom({...isCustom, to: event.target.value})}
+                            value={isCustom.to}
+                        />
+                        <Button
+                            variant='contained'
+                            sx={{
+                                height: '30px',
+                                backgroundColor: '#2C387E',
+                                flex: '1'
+                            }}
+                            onClick={() => handleCustomClick()}
+                        >
+                            Submit
+                        </Button>
                     </Box>
                 }
 
