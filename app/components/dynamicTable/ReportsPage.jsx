@@ -8,6 +8,7 @@ import { CiFilter } from "react-icons/ci";
 import { LuDownload } from "react-icons/lu";
 import ColumnFilterDialog from './ColumnFilterDialog';
 import SearchIcon from '@mui/icons-material/Search';
+import * as XLSX from 'xlsx';
 
 const ReportsPage = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -92,7 +93,7 @@ const ReportsPage = () => {
                 break;
             case 'custom':
                 setCreatedDate({ field: '', to: '', field: 'custom' });
-                setIsCustom({display: true, from: '', to: ''})
+                setIsCustom({ display: true, from: '', to: '' })
                 break;
             default:
                 return dataArr;
@@ -117,8 +118,42 @@ const ReportsPage = () => {
     }
 
     const handleCustomClick = () => {
-        setCreatedDate({field: 'custom', from: isCustom.from, to: isCustom.to});
+        setCreatedDate({ field: 'custom', from: isCustom.from, to: isCustom.to });
     }
+
+    const handleDownload = () => {
+        try {
+            let downloadData = JSON.parse(JSON.stringify(rows));
+            if(downloadData.length > 0) {
+                downloadData.forEach((item) => {
+                    if(columns[columns.findIndex(item => item.field === 'ID' && item.display === false)]) delete item.id
+                    if(columns[columns.findIndex(item => item.field === 'Created On' && item.display === false)]) delete item.createdOn
+                    if(columns[columns.findIndex(item => item.field === 'Payer' && item.display === false)]) delete item.payer
+                    if(columns[columns.findIndex(item => item.field === 'Status' && item.display === false)]) delete item.status
+                    if(columns[columns.findIndex(item => item.field === 'Email' && item.display === false)]) delete item.email
+                    if(columns[columns.findIndex(item => item.field === 'Payer Phone' && item.display === false)]) delete item.payerPhone
+                    if(columns[columns.findIndex(item => item.field === 'Services' && item.display === false)]) delete item.services
+                    if(columns[columns.findIndex(item => item.field === 'Scheduled' && item.display === false)]) delete item.scheduled
+                })
+            }
+
+            let fileName = createdDate.field.toLowerCase();
+            fileName = fileName + '.xlsx';
+            exportToExcel(downloadData, fileName);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const exportToExcel = (data, filename) => {
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        XLSX.writeFile(wb, filename);
+        setTimeout(() => {
+            // setIsDisabled(false);
+        }, 1000);
+    };
 
 
     return (
@@ -143,7 +178,7 @@ const ReportsPage = () => {
                         <Box sx={{ cursor: 'pointer', padding: '4px 10px', borderRight: '1px solid black' }} onClick={() => setOpenDialog('filter')}>
                             <CiFilter />
                         </Box>
-                        <Box sx={{ cursor: 'pointer', padding: '4px 10px' }}>
+                        <Box sx={{ cursor: 'pointer', padding: '4px 10px' }} onClick={() => handleDownload()}>
                             <LuDownload />
                         </Box>
                         <Box>
@@ -213,14 +248,14 @@ const ReportsPage = () => {
                             }}
                             type='date'
                             value={isCustom.from}
-                            onChange={(event) => event.target.value?.length > 0 && setIsCustom({...isCustom, from: event.target.value})}
+                            onChange={(event) => event.target.value?.length > 0 && setIsCustom({ ...isCustom, from: event.target.value })}
                         />
                         <input
                             style={{
                                 flex: '1'
                             }}
                             type='date'
-                            onChange={(event) => event.target.value?.length > 0 && setIsCustom({...isCustom, to: event.target.value})}
+                            onChange={(event) => event.target.value?.length > 0 && setIsCustom({ ...isCustom, to: event.target.value })}
                             value={isCustom.to}
                         />
                         <Button
