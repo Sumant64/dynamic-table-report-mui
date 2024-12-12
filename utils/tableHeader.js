@@ -9,7 +9,7 @@ export const columnData = [
         field: 'ID',
         display: true,
         svg: '',
-        width: '50px'
+        width: '80px'
     },
     {
         field: 'Created On',

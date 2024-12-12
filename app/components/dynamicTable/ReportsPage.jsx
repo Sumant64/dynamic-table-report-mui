@@ -21,10 +21,11 @@ const ReportsPage = () => {
     const [searchValue, setSearchValue] = useState('');
     const [createdDate, setCreatedDate] = useState({ from: '', to: '', field: 'All' });
     const [isCustom, setIsCustom] = useState({ from: '', to: '', display: false });
+    const [sort, setSort] = useState({field: '', value: ""});
 
     useEffect(() => {
         initialLoad(searchValue);
-    }, [page, rowsPerPage, createdDate]);
+    }, [page, rowsPerPage, createdDate, sort]);
 
     const initialLoad = (search) => {
         try {
@@ -55,6 +56,11 @@ const ReportsPage = () => {
                 dataArr = dateFilterList;
             }
 
+            if(sort.field && sort.value) {
+                
+                dataArr = sortColumn(dataArr);
+            }
+
             let paginatedData = dataArr.slice(page * rowsPerPage - rowsPerPage, page * rowsPerPage);
             setCount(dataArr.length);
             setRows(paginatedData);
@@ -62,6 +68,59 @@ const ReportsPage = () => {
         } catch (err) {
             console.log(err);
         }
+    }
+
+    const sortColumn = (dataArr) => {
+        let sortArr = JSON.parse(JSON.stringify(dataArr));
+        switch(sort.field) {
+            case "ID":
+                if(sort.value === "asc"){
+                    sortArr.sort((a, b) => a.id - b.id);
+                } else {
+                    sortArr.sort((a, b) => b.id - a.id);
+                }
+                break;
+            case "Payer" :
+                if(sort.value === "asc"){
+                    sortArr.sort((a, b) => a.payer.localeCompare(b.payer));
+                } else {
+                    sortArr.sort((a, b) => b.payer.localeCompare(a.payer));
+                }
+                break;
+            case "Created On" :
+                break;
+            case "Status" :
+                if(sort.value === "asc"){
+                    sortArr.sort((a, b) => a.status.localeCompare(b.status));
+                } else {
+                    sortArr.sort((a, b) => b.status.localeCompare(a.status));
+                }
+                break;
+            case "Email" :
+                if(sort.value === "asc"){
+                    sortArr.sort((a, b) => a.email.localeCompare(b.email));
+                } else {
+                    sortArr.sort((a, b) => b.email.localeCompare(a.email));
+                }
+                break;
+            case "Payer Phone" :
+                if(sort.value === "asc"){
+                    sortArr.sort((a, b) => a.payerPhone.localeCompare(b.payerPhone));
+                } else {
+                    sortArr.sort((a, b) => b.payerPhone.localeCompare(a.payerPhone));
+                }
+                break;
+            case "Services" :
+                if(sort.value === "asc"){
+                    sortArr.sort((a, b) => a.services.localeCompare(b.services));
+                } else {
+                    sortArr.sort((a, b) => b.services.localeCompare(a.services));
+                }
+                break;
+            case "Scheduled" :
+                break;
+        }
+        return sortArr 
     }
 
     const sortByDate = (val) => {
@@ -273,7 +332,7 @@ const ReportsPage = () => {
                 }
 
 
-                <ReportsTable setRowsPerPage={setRowsPerPage} page={page} setPage={setPage} columns={columns} count={count} rowsPerPage={rowsPerPage} rows={rows} />
+                <ReportsTable sort={sort} setSort={setSort} setRowsPerPage={setRowsPerPage} page={page} setPage={setPage} columns={columns} count={count} rowsPerPage={rowsPerPage} rows={rows} />
             </Box>
         </>
     )

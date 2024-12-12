@@ -1,8 +1,10 @@
 import { dateFormat } from '@/utils/date';
-import { Paper, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
-import React from 'react'
+import { Paper, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TablePagination, TableRow, Tooltip } from '@mui/material';
+import React from 'react';
+import SouthIcon from '@mui/icons-material/South';
+import NorthIcon from '@mui/icons-material/North';
 
-const ReportsTable = ({ columns, page, rowsPerPage, count, rows, setPage, setRowsPerPage }) => {
+const ReportsTable = ({ columns, page, rowsPerPage, count, rows, setPage, setRowsPerPage, sort, setSort }) => {
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -29,6 +31,14 @@ const ReportsTable = ({ columns, page, rowsPerPage, count, rows, setPage, setRow
     setPage(1);
   }
 
+  const handleSort = (item) => {
+      if(item === sort.field) {
+        setSort({field: item, value: sort.value === "asc" ? "desc" : "asc"})
+      } else {
+        setSort({field: item, value: "asc"})
+      }
+  }
+
   return (
     <>
       {/* table section */}
@@ -40,8 +50,14 @@ const ReportsTable = ({ columns, page, rowsPerPage, count, rows, setPage, setRow
                 columns.map((item, index) => {
                   if (item.display) {
                     return (
-                      <StyledTableCell key={index} sx={{ minWidth: item?.width }}>
-                        {item.field}
+                      <StyledTableCell key={index} sx={{ minWidth: item?.width, cursor: 'pointer' }} onClick={() => handleSort(item.field)}>
+                        <Tooltip title="Click to Sort Column">
+                          <div>
+                              {item.field}
+                              {sort.field === item.field && sort.value === "asc" && <SouthIcon sx={{position: 'relative', top: '2px', marginLeft: '5px', fontSize: '15px'}} /> }
+                              {sort.field === item.field && sort.value === "desc" && <NorthIcon sx={{position: 'relative', top: '2px', marginLeft: '5px', fontSize: '15px'}} />}
+                          </div>
+                        </Tooltip>
                       </StyledTableCell>
                     )
                   }
