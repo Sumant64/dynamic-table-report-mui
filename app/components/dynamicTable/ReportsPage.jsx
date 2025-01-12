@@ -88,6 +88,11 @@ const ReportsPage = () => {
                 }
                 break;
             case "Created On" :
+                if(sort.value === "asc"){
+                    sortArr.sort((a, b) => new Date(a.createdOn).getTime() - new Date(b.createdOn).getTime());
+                } else {
+                    sortArr.sort((a, b) => new Date(b.createdOn).getTime() - new Date(a.createdOn).getTime());
+                }
                 break;
             case "Status" :
                 if(sort.value === "asc"){
@@ -118,6 +123,11 @@ const ReportsPage = () => {
                 }
                 break;
             case "Scheduled" :
+                if(sort.value === "asc"){
+                    sortArr.sort((a, b) => new Date(a.scheduled).getTime() - new Date(b.scheduled).getTime());
+                } else {
+                    sortArr.sort((a, b) => new Date(b.scheduled).getTime() - new Date(a.scheduled).getTime());
+                }
                 break;
         }
         return sortArr 
